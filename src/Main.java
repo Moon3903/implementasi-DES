@@ -1,114 +1,55 @@
-import java.util.Scanner;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 
 public class Main {
   public static final String ANSI_RED = "\u001B[31m";
   public static final String ANSI_RESET = "\u001B[0m";
 
-  public static void main(String[] args) {
-    Scanner scan = new Scanner(System.in);
-    int input;
-    StringBuilder plaintext;
-    String key;
+  public static void main(String[] args) throws IOException {
+// Step 1 : Create a socket to listen at port 1234
+    DatagramSocket ds = new DatagramSocket(1234);
+    byte[] receive = new byte[65535];
+    DesController desController = new DesController();
 
-    Des cipher = new Des();
+    DatagramPacket DpReceive = null;
+
+    ClientThread clientThread = new ClientThread();
+
+    clientThread.start();
 
     while (true) {
-      System.out.println("Menu: \n" +
-          "1. Enkripsi DES\n" +
-          "2. Dekripsi DES\n" +
-          "3. Enkripsi Triple DES\n" +
-          "4. Dekripsi Triple DES\n" +
-          "0. Exit");
-      input = scan.nextInt();
-      if (input == 1) {
-        scan.nextLine();
-        System.out.println("Masukan plain text");
-        plaintext = new StringBuilder(scan.nextLine());
-        System.out.println("Masukan kunci (16 digit hexadecimal)");
-        key = scan.nextLine();
+      // Step 2 : create a DatgramPacket to receive the data.
+      DpReceive = new DatagramPacket(receive, receive.length);
 
-        StringBuilder result = new StringBuilder();
+      // Step 3 : revieve the data in byte buffer.
+      ds.receive(DpReceive);
 
-        while (plaintext.length() % 8 != 0) {
-          plaintext.append('\t');
-        }
+      System.out.println("Client:-" + desController.decryptDes(data(receive)));
 
-        for (String i : plaintext.toString().split("(?<=\\G........)")) {
-          System.out.println("encrypting " + i);
-          result.append(cipher.encrypt(i, key));
-        }
-
-        System.out.println("cipher: " + ANSI_RED + result + ANSI_RESET);
-        System.out.println("Masukan apapun untuk melanjutkan");
-        scan.nextLine();
-      } else if (input == 2) {
-        scan.nextLine();
-        System.out.println("Masukan cipher text");
-        plaintext = new StringBuilder(scan.nextLine());
-        System.out.println("Masukan kunci (16 digit hexadecimal)");
-        key = scan.nextLine();
-
-        StringBuilder result = new StringBuilder();
-
-        for (String i : plaintext.toString().split("(?<=\\G................)")) {
-          result.append(cipher.decrypt(i, key));
-        }
-
-        System.out.println("plain text: " + ANSI_RED + result.toString().replaceAll("\t","") + ANSI_RESET);
-        System.out.println("Masukan apapun untuk melanjutkan");
-        scan.nextLine();
-      } else if (input == 3) {
-        scan.nextLine();
-        System.out.println("Masukan plain text");
-        plaintext = new StringBuilder(scan.nextLine());
-
-        String key1, key2;
-
-        System.out.println("Masukan kunci 1 (16 digit hexadecimal)");
-        key1 = scan.nextLine();
-        System.out.println("Masukan kunci 2 (16 digit hexadecimal)");
-        key2 = scan.nextLine();
-
-        StringBuilder result = new StringBuilder();
-
-        while (plaintext.length() % 8 != 0) {
-          plaintext.append('\t');
-        }
-
-        for (String i : plaintext.toString().split("(?<=\\G........)")) {
-          System.out.println("encrypting " + i);
-          result.append(cipher.tripleDesEncrypt(i, key1, key2));
-        }
-        System.out.println("cipher: " + ANSI_RED + result + ANSI_RESET);
-        System.out.println("Masukan apapun untuk melanjutkan");
-        scan.nextLine();
-      } else if (input == 4) {
-        scan.nextLine();
-        System.out.println("Masukan cipher text");
-        plaintext = new StringBuilder(scan.nextLine());
-
-        String key1, key2;
-
-        System.out.println("Masukan kunci 1 (16 digit hexadecimal)");
-        key1 = scan.nextLine();
-        System.out.println("Masukan kunci 2 (16 digit hexadecimal)");
-        key2 = scan.nextLine();
-
-        StringBuilder result = new StringBuilder();
-
-        for (String i : plaintext.toString().split("(?<=\\G................)")) {
-          result.append(cipher.tripleDesDecrypt(i, key1, key2));
-        }
-
-        System.out.println("plain text: " + ANSI_RED + result.toString().replaceAll("\t","") + ANSI_RESET);
-        System.out.println("Masukan apapun untuk melanjutkan");
-        scan.nextLine();
-      } else {
-        break;
-      }
+      // Clear the buffer after every message.
+      receive = new byte[65535];
     }
 //    INIBUATTESTINK
 //    AABB0918AABB0918
 //    BB0918AABB0918BB
+  }
+
+  // A utility method to convert the byte array
+  // data into a string representation.
+  public static StringBuilder data(byte[] a)
+  {
+    if (a == null)
+      return null;
+    StringBuilder ret = new StringBuilder();
+    int i = 0;
+    while (a[i] != 0)
+    {
+      ret.append((char) a[i]);
+      i++;
+    }
+    return ret;
   }
 }
