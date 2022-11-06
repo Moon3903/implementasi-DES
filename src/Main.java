@@ -13,7 +13,7 @@ public class Main {
     byte[] receive = new byte[65535];
     DesController desController = new DesController();
 
-    DatagramPacket DpReceive = null;
+    DatagramPacket DpReceive;
 
     ClientThread clientThread = new ClientThread();
 
@@ -26,6 +26,7 @@ public class Main {
       // Step 3 : revieve the data in byte buffer.
       ds.receive(DpReceive);
 
+      System.out.println("received " + data(receive));
       System.out.println("Client:-" + desController.decryptDes(data(receive)));
 
       // Clear the buffer after every message.

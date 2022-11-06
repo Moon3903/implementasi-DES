@@ -27,7 +27,7 @@ public class ClientThread extends Thread {
     // loop while user not enters "bye"
     while (true) {
       String inp = desController.encrypDes(new StringBuilder(sc.nextLine()));
-//      System.out.println("Sending " + inp);
+      System.out.println("Sending " + inp);
 
       // convert the String input into the byte array.
       buf = inp.getBytes();
