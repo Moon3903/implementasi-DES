@@ -21,12 +21,13 @@ public class ClientThread extends Thread {
     // carrying the data.
     DatagramSocket ds = new DatagramSocket();
 
-    InetAddress ip = InetAddress.getLocalHost();
+    InetAddress ip = InetAddress.getByName("192.168.88.138");
     byte buf[] = null;
 
     // loop while user not enters "bye"
     while (true) {
       String inp = desController.encrypDes(new StringBuilder(sc.nextLine()));
+//      System.out.println("Sending " + inp);
 
       // convert the String input into the byte array.
       buf = inp.getBytes();
