@@ -16,17 +16,18 @@ public class ClientThread extends Thread {
     Scanner sc = new Scanner(System.in);
 
     DesController desController = new DesController();
+    RSA rsa = new RSA();
 
     // Step 1:Create the socket object for
     // carrying the data.
     DatagramSocket ds = new DatagramSocket();
 
-    InetAddress ip = InetAddress.getByName("192.168.88.138");
+    InetAddress ip = InetAddress.getByName("192.168.88.103");
     byte buf[] = null;
 
     // loop while user not enters "bye"
     while (true) {
-      String inp = desController.encrypDes(new StringBuilder(sc.nextLine()));
+      String inp = rsa.encryptString(desController.encrypDes(new StringBuilder(sc.nextLine())));
       System.out.println("Sending " + inp);
 
       // convert the String input into the byte array.

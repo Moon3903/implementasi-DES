@@ -12,6 +12,7 @@ public class Main {
     DatagramSocket ds = new DatagramSocket(1234);
     byte[] receive = new byte[65535];
     DesController desController = new DesController();
+    RSA rsa = new RSA();
 
     DatagramPacket DpReceive;
 
@@ -27,7 +28,7 @@ public class Main {
       ds.receive(DpReceive);
 
       System.out.println("received " + data(receive));
-      System.out.println("Client:-" + desController.decryptDes(data(receive)));
+      System.out.println("Client:-" + desController.decryptDes(rsa.decryptString(data(receive))));
 
       // Clear the buffer after every message.
       receive = new byte[65535];
